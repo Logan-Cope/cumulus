@@ -18,3 +18,8 @@ data/curriculum/*
 .DS_Store
 .idea/
 .vscode/
+
+# Claude Code local (never commit)
+.claude/settings.json
+.claude/settings.local.json
+CLAUDE.local.md
