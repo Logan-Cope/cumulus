@@ -1,0 +1,28 @@
+-- Cumulus schema. One Postgres database does everything:
+-- app data, conversation memory/checkpoints, audit, AND vectors (pgvector).
+-- This is the "don't add a second system until you need it" choice.
+
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- Unstructured curriculum chunks for RAG retrieval.
+CREATE TABLE IF NOT EXISTS chunks (
+    id          BIGSERIAL PRIMARY KEY,
+    content     TEXT NOT NULL,
+    embedding   VECTOR(1024),          -- dim depends on the embedding model
+    module      TEXT,                  -- e.g. "Networking", "IAM"
+    lesson      TEXT,                  -- e.g. "VPC Peering"
+    source_url  TEXT,                  -- provenance: where this came from (Notion page, etc.)
+    fetched_at  TIMESTAMPTZ DEFAULT now()
+);
+
+-- HNSW index = fast approximate nearest-neighbour search (same algo the dedicated
+-- vector DBs use). Cosine distance to match normalized embeddings.
+CREATE INDEX IF NOT EXISTS chunks_embedding_idx
+    ON chunks USING hnsw (embedding vector_cosine_ops);
+
+-- Metadata filter index so "only the Networking module" queries are cheap.
+CREATE INDEX IF NOT EXISTS chunks_module_idx ON chunks (module);
+
+-- LangGraph's PostgresSaver / PostgresStore create their own tables on setup()
+-- (checkpoints for conversation memory, store for long-term per-user memory).
+-- Nothing to define here for those — see app/graph.py.

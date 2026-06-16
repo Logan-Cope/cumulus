@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Env / secrets
+.env
+*.key
+
+# Data (raw curriculum is private course IP — never commit)
+data/curriculum/*
+!data/curriculum/.gitkeep
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
