@@ -13,7 +13,13 @@ EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "text-embedding-3-small")
 
 RETRIEVAL_K = int(os.environ.get("RETRIEVAL_K", "6"))
 
-# Cosine-similarity floor below which retrieval is treated as "no real match",
-# so the bot refuses instead of straining to answer off-curriculum questions.
-# In-curriculum questions score ~0.65-0.82; unrelated ones top out near ~0.22.
+# Two cosine-similarity floors, deliberately separate:
+#   RELEVANCE_FLOOR - below this the TOP hit is "no real match", so the bot
+#     refuses rather than strain to answer an off-curriculum question. Kept low
+#     so paraphrased-but-valid questions still get answered.
+#   CONTEXT_FLOOR - only chunks at/above this bar are put into the prompt and
+#     cited. Higher than the refusal floor so weak, tangential chunks stop
+#     leaking into citations (raises citation precision). The top hit is always
+#     kept as a fallback so a question we chose to answer never has empty context.
 RELEVANCE_FLOOR = float(os.environ.get("RELEVANCE_FLOOR", "0.35"))
+CONTEXT_FLOOR = float(os.environ.get("CONTEXT_FLOOR", "0.55"))

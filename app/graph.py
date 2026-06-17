@@ -23,7 +23,7 @@ from typing import TypedDict
 from langchain_anthropic import ChatAnthropic
 from langgraph.graph import END, START, StateGraph
 
-from app.answer import REFUSAL, _format_context, _llm, _prompt
+from app.answer import REFUSAL, _format_context, _llm, _prompt, select_context
 from app.config import CHEAP_MODEL, RELEVANCE_FLOOR, RETRIEVAL_K
 from app.personas.cloud_mentor import CLOUD_MENTOR
 from app.retrieval import search_curriculum
@@ -84,13 +84,14 @@ def requery_node(state: State) -> State:
 def answer_node(state: State) -> State:
     """Call the chat model with retrieved context + persona prompt; cite sources."""
     chunks = state["retrieved"]
+    context = select_context(chunks) or chunks[:1]
     messages = [
         ("system", CLOUD_MENTOR.system_prompt),
-        ("human", _prompt(state["original"], _format_context(chunks))),
+        ("human", _prompt(state["original"], _format_context(context))),
     ]
     text = _llm().invoke(messages).content.strip()
     grounded = REFUSAL.rstrip(".") not in text
-    return {"answer": text, "sources": chunks if grounded else [], "grounded": grounded}
+    return {"answer": text, "sources": context if grounded else [], "grounded": grounded}
 
 
 def refuse_node(state: State) -> State:

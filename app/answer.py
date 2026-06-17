@@ -13,7 +13,7 @@ from dataclasses import dataclass
 
 from langchain_anthropic import ChatAnthropic
 
-from app.config import CHAT_MODEL, RELEVANCE_FLOOR, RETRIEVAL_K
+from app.config import CHAT_MODEL, CONTEXT_FLOOR, RELEVANCE_FLOOR, RETRIEVAL_K
 from app.personas.cloud_mentor import CLOUD_MENTOR
 from app.retrieval import RetrievedChunk, search_curriculum
 
@@ -53,14 +53,11 @@ def _llm() -> ChatAnthropic:
 
 
 def select_context(chunks: list[RetrievedChunk]) -> list[RetrievedChunk]:
-    """The chunks that actually go into the prompt and get cited.
-
-    Currently every retrieved chunk above the refusal gate qualifies; step 4
-    tightens this to a higher context bar so weak, off-topic chunks stop
-    leaking into citations. The eval measures citation precision through this
-    one function, so the before/after numbers move on their own.
+    """The chunks that actually go into the prompt and get cited: only those at
+    or above CONTEXT_FLOOR, so weak, tangential matches don't leak into
+    citations. Callers fall back to the top hit when this is empty.
     """
-    return list(chunks)
+    return [c for c in chunks if c.score >= CONTEXT_FLOOR]
 
 
 def answer_question(query: str, k: int = RETRIEVAL_K) -> Answer:
