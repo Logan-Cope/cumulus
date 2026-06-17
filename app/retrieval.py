@@ -14,7 +14,8 @@ import psycopg
 from langchain_openai import OpenAIEmbeddings
 from pgvector.psycopg import register_vector
 
-from app.config import DATABASE_URL, EMBEDDING_MODEL, RETRIEVAL_K
+from app.config import DATABASE_URL, EMBEDDING_MODEL, RERANK_CANDIDATES, RETRIEVAL_K
+from app.rerank import rerank, rerank_enabled
 
 
 @dataclass
@@ -41,12 +42,17 @@ def embed_query(text: str) -> list[float]:
 def search_curriculum(
     query: str, module: str | None = None, k: int = RETRIEVAL_K
 ) -> list[RetrievedChunk]:
-    """Dense nearest-neighbour retrieval over curriculum chunks.
+    """Nearest-neighbour retrieval over curriculum chunks, optionally reranked.
 
     Returns chunks WITH module/lesson/source_url so the agent can cite every
-    claim. `score` is cosine similarity in [0, 1] (1 - cosine distance).
+    claim. `score` is cosine similarity in [0, 1] (1 - cosine distance) and is
+    preserved even after reranking, so the cosine-calibrated floors still apply.
+
+    When reranking is enabled we pull a wider candidate pool first, then let the
+    reranker pick the top k; otherwise we return the top k directly.
     """
     q = embed_query(query)
+    limit = max(k, RERANK_CANDIDATES) if rerank_enabled() else k
 
     sql = """
         SELECT content, module, lesson, source_url,
@@ -54,17 +60,21 @@ def search_curriculum(
         FROM chunks
         {where}
         ORDER BY embedding <=> %(q)s
-        LIMIT %(k)s
+        LIMIT %(limit)s
     """.format(where="WHERE module = %(module)s" if module else "")
 
     with psycopg.connect(DATABASE_URL) as conn:
         register_vector(conn)
         with conn.cursor() as cur:
             # numpy array so pgvector's adapter sends a `vector`, not a float[].
-            cur.execute(sql, {"q": np.asarray(q, dtype=np.float32), "module": module, "k": k})
+            cur.execute(
+                sql,
+                {"q": np.asarray(q, dtype=np.float32), "module": module, "limit": limit},
+            )
             rows = cur.fetchall()
 
-    return [
+    candidates = [
         RetrievedChunk(content=c, module=m, lesson=les, source_url=s, score=float(score))
         for (c, m, les, s, score) in rows
     ]
+    return rerank(query, candidates, top_n=k) if rerank_enabled() else candidates

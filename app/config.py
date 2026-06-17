@@ -23,3 +23,13 @@ RETRIEVAL_K = int(os.environ.get("RETRIEVAL_K", "6"))
 #     kept as a fallback so a question we chose to answer never has empty context.
 RELEVANCE_FLOOR = float(os.environ.get("RELEVANCE_FLOOR", "0.35"))
 CONTEXT_FLOOR = float(os.environ.get("CONTEXT_FLOOR", "0.55"))
+
+# Reranking (optional, behind app/rerank.py). When a provider + key is set, we
+# pull RERANK_CANDIDATES by vector similarity, let a cross-encoder reorder by true
+# relevance, and keep the top RETRIEVAL_K. Empty provider = graceful no-op (dense
+# vectors only), so retrieval always works without these set.
+RERANK_PROVIDER = os.environ.get("RERANK_PROVIDER", "").strip().lower()  # cohere|voyage|""
+RERANK_MODEL = os.environ.get("RERANK_MODEL", "").strip()
+RERANK_CANDIDATES = int(os.environ.get("RERANK_CANDIDATES", "20"))
+COHERE_API_KEY = os.environ.get("COHERE_API_KEY", "").strip()
+VOYAGE_API_KEY = os.environ.get("VOYAGE_API_KEY", "").strip()

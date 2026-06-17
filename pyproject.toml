@@ -19,6 +19,14 @@ dependencies = [
     "pydantic>=2.9.0",
 ]
 
+[project.optional-dependencies]
+# Reranker SDKs are optional and lazily imported; install only the provider you
+# use, e.g. `uv sync --extra rerank`. Retrieval no-ops gracefully without them.
+rerank = [
+    "cohere>=5.0.0",
+    "voyageai>=0.2.0",
+]
+
 [dependency-groups]
 dev = [
     "pre-commit>=4.6.0",
