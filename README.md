@@ -93,12 +93,6 @@ python -m ingest.chunk && python -m ingest.embed
 uvicorn app.api:app --reload
 ```
 
-## Status
-
-🚧 **In active development.** Scaffold and architecture are in place; core nodes,
-retrieval, and ingestion are being implemented. Curriculum content is private and not
-committed.
-
 ## License
 
 [MIT](LICENSE) © 2026 Logan Cope
