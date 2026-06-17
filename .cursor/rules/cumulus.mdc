@@ -1,0 +1,21 @@
+---
+description: Cumulus project conventions
+alwaysApply: true
+---
+
+# Cumulus
+
+A grounded RAG + agent mentor bot over a cloud curriculum. It answers only from
+retrieved curriculum and cites the source lesson. See docs/ARCHITECTURE.md and
+docs/BUILD-PLAN.md for the design and the first milestone.
+
+## Code
+- Python 3.12, uv for dependencies.
+- Keep retrieval behind app/retrieval.py so the vector store stays swappable.
+- Personas are config in app/personas/, never hard-coded into the engine.
+- Ground every answer and cite sources; prefer "I don't have enough information
+  from the curriculum" over guessing.
+
+## Commits
+- Concise, present tense, no em dashes.
+- Small, logical commits; push after meaningful units of work.
