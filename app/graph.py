@@ -25,8 +25,8 @@ from langgraph.graph import END, START, StateGraph
 
 from app.answer import REFUSAL, _format_context, _llm, _prompt, select_context
 from app.config import CHEAP_MODEL, RELEVANCE_FLOOR, RETRIEVAL_K
+from app.mcp_server import retrieve_via_mcp
 from app.personas.cloud_mentor import CLOUD_MENTOR
-from app.retrieval import search_curriculum
 
 # Above CONFIDENT -> answer; below RELEVANCE_FLOOR -> refuse; in between -> one
 # capped query rewrite. In-curriculum questions score ~0.65+, so the band mostly
@@ -49,7 +49,10 @@ class State(TypedDict, total=False):
 
 
 def retrieve_node(state: State) -> State:
-    chunks = search_curriculum(state["question"], k=RETRIEVAL_K)
+    # Reach the knowledge layer through the MCP tool (with a direct fallback
+    # inside retrieve_via_mcp), so the engine speaks to retrieval the same way
+    # any other MCP client would.
+    chunks = retrieve_via_mcp(state["question"], k=RETRIEVAL_K)
     return {"retrieved": chunks}
 
 

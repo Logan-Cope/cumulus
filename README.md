@@ -93,6 +93,27 @@ python -m ingest.chunk && python -m ingest.embed
 uvicorn app.api:app --reload
 ```
 
+## MCP server (knowledge bridge)
+
+Retrieval is exposed as an [MCP](https://modelcontextprotocol.io) tool so the
+knowledge layer is reusable and front-end-agnostic — any MCP client (the Cumulus
+graph, Claude Desktop, another agent) can query the curriculum the same way.
+
+```bash
+# Run the server (stdio transport, the MCP default)
+uv run python -m app.mcp_server
+```
+
+It exposes one tool:
+
+- **`search_curriculum(query: str, module: str | None = None)`** — searches the
+  cloud-engineering curriculum and returns the most relevant chunks, each WITH
+  its `module`, `lesson`, `source_url`, and similarity `score`, so every answer
+  can cite the exact lesson. Pass `module` to restrict the search to one module.
+
+The LangGraph engine retrieves *through* this tool (`retrieve_via_mcp`), with a
+direct-retrieval fallback so a transport hiccup never breaks the answer loop.
+
 ## License
 
 [MIT](LICENSE) © 2026 Logan Cope
