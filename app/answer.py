@@ -52,6 +52,17 @@ def _llm() -> ChatAnthropic:
     return ChatAnthropic(model=CHAT_MODEL, temperature=0, max_tokens=1024)
 
 
+def select_context(chunks: list[RetrievedChunk]) -> list[RetrievedChunk]:
+    """The chunks that actually go into the prompt and get cited.
+
+    Currently every retrieved chunk above the refusal gate qualifies; step 4
+    tightens this to a higher context bar so weak, off-topic chunks stop
+    leaking into citations. The eval measures citation precision through this
+    one function, so the before/after numbers move on their own.
+    """
+    return list(chunks)
+
+
 def answer_question(query: str, k: int = RETRIEVAL_K) -> Answer:
     chunks = search_curriculum(query, k=k)
 
@@ -60,14 +71,15 @@ def answer_question(query: str, k: int = RETRIEVAL_K) -> Answer:
     if not chunks or chunks[0].score < RELEVANCE_FLOOR:
         return Answer(text=REFUSAL, sources=[], grounded=False)
 
+    context = select_context(chunks) or chunks[:1]
     messages = [
         ("system", CLOUD_MENTOR.system_prompt),
-        ("human", _prompt(query, _format_context(chunks))),
+        ("human", _prompt(query, _format_context(context))),
     ]
     text = _llm().invoke(messages).content.strip()
 
     grounded = REFUSAL.rstrip(".") not in text
-    return Answer(text=text, sources=chunks if grounded else [], grounded=grounded)
+    return Answer(text=text, sources=context if grounded else [], grounded=grounded)
 
 
 def _print(ans: Answer) -> None:

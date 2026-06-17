@@ -1,0 +1,75 @@
+# Cumulus retrieval eval set.
+# Each case: a learner question and the lesson(s) whose content should answer it.
+# A retrieval "hit" = ANY expected lesson appears in the top-k results.
+# `should_refuse: true` cases must return the refusal (off-curriculum).
+# Lesson strings match the `lesson` field produced by ingest/chunk.py.
+
+cases:
+  - question: "What does the CPU do, and how is it different from RAM?"
+    expected_lessons: ["Understanding Computer Hardware"]
+
+  - question: "Which operating system is most commonly used to run servers?"
+    expected_lessons: ["Exploring Operating Systems"]
+
+  - question: "What is cloud computing, in simple terms?"
+    expected_lessons:
+      ["Lesson 2: Cloud Computing Concepts",
+       "Lesson 4: Understanding Cloud Computing: Models and Benefits"]
+
+  - question: "Who are the three major cloud providers?"
+    expected_lessons: ["Lesson 3: Overview of Major Cloud Providers"]
+
+  - question: "What's the difference between an AWS region and an availability zone?"
+    expected_lessons: ["Region:", "Availability Zone:"]
+
+  - question: "How can I manage AWS from the command line instead of the console?"
+    expected_lessons: ["AWS Command Line Interface (CLI)"]
+
+  - question: "What is DNS and how does it work?"
+    expected_lessons: ["Computer Networking 🌐"]
+
+  # Paraphrased / awkward phrasing — exercises the corrective-RAG requery path.
+  - question: "the thing that turns website names into IP addresses — how does that work?"
+    expected_lessons: ["Computer Networking 🌐"]
+
+  - question: "What does the pwd command do in Linux?"
+    expected_lessons: ["CLI Commands"]
+
+  - question: "What is SQL used for?"
+    expected_lessons: ["Lesson 1: Introduction to SQL"]
+
+  - question: "What's the difference between relational and non-relational databases?"
+    expected_lessons: ["Lesson 4: Types of Databases"]
+
+  - question: "How do I set up MySQL on a Linux instance?"
+    expected_lessons: ["Lesson 5: Setting Up MySQL on Linux"]
+
+  - question: "Which SQL data type should I use to store whole numbers?"
+    expected_lessons: ["Lesson 7: Understanding Data Types"]
+
+  - question: "What is AWS IAM and what is it for?"
+    expected_lessons:
+      ["1. What is AWS IAM?",
+       "Understanding AWS Identity and Access Management (IAM)"]
+
+  - question: "How do I create an IAM user?"
+    expected_lessons: ["Creating an IAM User:"]
+
+  - question: "When should I use an IAM role instead of an IAM user?"
+    expected_lessons: ["4. IAM Roles"]
+
+  - question: "What are the parts of an IAM policy document?"
+    expected_lessons: ["5. IAM Policies", "Structure of an IAM Policy:"]
+
+  - question: "What is Terraform and what problem does it solve?"
+    expected_lessons: ["What is Terraform?", "1. Introduction to Terraform"]
+
+  - question: "What are the basic building blocks of Terraform?"
+    expected_lessons: ["3. Basic Terraform Concepts"]
+
+  # Off-curriculum — must refuse, not guess.
+  - question: "How do I bake sourdough bread?"
+    should_refuse: true
+
+  - question: "What stock should I buy this week?"
+    should_refuse: true
