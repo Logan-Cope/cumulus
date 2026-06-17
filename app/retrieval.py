@@ -65,6 +65,6 @@ def search_curriculum(
             rows = cur.fetchall()
 
     return [
-        RetrievedChunk(content=c, module=m, lesson=l, source_url=s, score=float(score))
-        for (c, m, l, s, score) in rows
+        RetrievedChunk(content=c, module=m, lesson=les, source_url=s, score=float(score))
+        for (c, m, les, s, score) in rows
     ]
