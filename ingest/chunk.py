@@ -47,28 +47,49 @@ def _is_module_divider(level: int, text: str) -> bool:
     return level == 1 and (bool(_DAY.search(text)) or bool(_PROJECT.match(text)))
 
 
+def _has_body(lines: list[str]) -> bool:
+    """True if any line after the heading carries real content (not just `---`)."""
+    return any(re.search(r"[A-Za-z0-9]", line) for line in lines[1:])
+
+
 def _split_sections(markdown_text: str):
     """Yield (module, lesson, content) for each heading-delimited section.
 
     Tracks fenced-code state so `#` comments inside ``` blocks are treated as
     content, never headings. `module` follows the most recent day/project
-    divider; `lesson` is the section's own heading.
+    divider.
+
+    Notion flattens parent topics and their sub-points to the same heading level,
+    so a topic heading is often immediately followed by another heading with no
+    body of its own. Rather than emit those as tiny standalone chunks, heading-only
+    sections are carried forward and merged into the next content-bearing section;
+    the outermost carried heading becomes that chunk's `lesson` (it is the better
+    citation label), and every carried heading is prepended to the content.
     """
     module: str | None = None
     cur_level = cur_label = None
     body: list[str] = []
+    pending: list[str] = []  # headings of heading-only sections awaiting a body
     in_code = False
 
     def flush():
         if cur_label is None:
             return None
-        content = "\n".join(body).strip()
-        if not content:
-            return None
-        # A module-divider section's own preamble is the day's "Overview".
         is_divider = _is_module_divider(cur_level, cur_label)
-        lesson = "Overview" if is_divider else _clean(cur_label)
-        return (module or "Course Overview", lesson, content)
+        if not _has_body(body):
+            # Heading-only: carry non-divider headings into the next section.
+            # Dividers carry no text forward; they have already set `module`.
+            if not is_divider:
+                pending.append(cur_label)
+            return None
+        if pending:
+            lesson = _clean(pending[0])
+            content = "\n".join([_clean(h) for h in pending] + body).strip()
+            pending.clear()
+        else:
+            lesson = "Overview" if is_divider else _clean(cur_label)
+            content = "\n".join(body).strip()
+        return (module or "Course Overview", lesson, content) if content else None
 
     for line in markdown_text.splitlines():
         if _FENCE.match(line):
@@ -113,17 +134,22 @@ def chunk_markdown(path: str, source_url: str | None = None) -> list[dict]:
     chunks: list[dict] = []
     for module, lesson, content in _split_sections(text):
         pieces = splitter.split_text(content) if len(content) > CHUNK_SIZE else [content]
+        # Prepend a `module > lesson` breadcrumb so each chunk's embedding carries
+        # its place in the curriculum, not just the local prose. (Lightweight
+        # contextual retrieval — the breadcrumb is also the citation.)
+        breadcrumb = f"{module} > {lesson}"
         for piece in pieces:
             piece = piece.strip()
-            if piece:
-                chunks.append(
-                    {
-                        "content": piece,
-                        "module": module,
-                        "lesson": lesson,
-                        "source_url": source_url,
-                    }
-                )
+            if not re.search(r"[A-Za-z0-9]", piece):
+                continue  # drop divider-only fragments left by size-splitting
+            chunks.append(
+                {
+                    "content": f"{breadcrumb}\n\n{piece}",
+                    "module": module,
+                    "lesson": lesson,
+                    "source_url": source_url,
+                }
+            )
     return chunks
 
 
