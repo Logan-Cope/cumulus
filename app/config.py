@@ -33,3 +33,9 @@ RERANK_MODEL = os.environ.get("RERANK_MODEL", "").strip()
 RERANK_CANDIDATES = int(os.environ.get("RERANK_CANDIDATES", "20"))
 COHERE_API_KEY = os.environ.get("COHERE_API_KEY", "").strip()
 VOYAGE_API_KEY = os.environ.get("VOYAGE_API_KEY", "").strip()
+
+# Hybrid search: blend dense (pgvector) with keyword (Postgres full-text) so exact
+# terms (service names, CLI commands, acronyms) aren't missed by embeddings. The
+# two arms are fused with Reciprocal Rank Fusion (RRF_K is its smoothing constant).
+HYBRID_SEARCH = os.environ.get("HYBRID_SEARCH", "true").strip().lower() in ("1", "true", "yes")
+RRF_K = int(os.environ.get("RRF_K", "60"))

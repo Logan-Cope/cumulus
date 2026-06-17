@@ -23,6 +23,12 @@ CREATE INDEX IF NOT EXISTS chunks_embedding_idx
 -- Metadata filter index so "only the Networking module" queries are cheap.
 CREATE INDEX IF NOT EXISTS chunks_module_idx ON chunks (module);
 
+-- Full-text (keyword) index for the hybrid-search arm: exact terms like service
+-- names, CLI commands, and acronyms that dense embeddings can blur. GIN over the
+-- English tsvector of the content.
+CREATE INDEX IF NOT EXISTS chunks_content_fts_idx
+    ON chunks USING gin (to_tsvector('english', content));
+
 -- LangGraph's PostgresSaver / PostgresStore create their own tables on setup()
 -- (checkpoints for conversation memory, store for long-term per-user memory).
 -- Nothing to define here for those — see app/graph.py.

@@ -40,6 +40,7 @@ each choice.
 
 - **Guided interview, deterministic spine** — LangGraph nodes are phases; the model supplies the language, the graph supplies the structure.
 - **Grounded + cited only** — retrieve, answer from context, cite the module/lesson, refuse when context is insufficient.
+- **Hybrid retrieval** — dense (pgvector) + keyword (Postgres full-text) fused with Reciprocal Rank Fusion, with an optional cross-encoder reranker, so exact terms (service names, commands, acronyms) aren't missed.
 - **Corrective RAG** — grade retrieval; re-query or refuse if it's weak (capped).
 - **Persona = config, not code** — add mentors without touching the engine.
 - **One database** — pgvector keeps app data, memory, audit, and vectors in a single Postgres.

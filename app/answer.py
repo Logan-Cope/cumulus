@@ -64,11 +64,12 @@ def answer_question(query: str, k: int = RETRIEVAL_K) -> Answer:
     chunks = search_curriculum(query, k=k)
 
     # Relevance gate: nothing close enough means we refuse before spending a
-    # model call straining to answer. This is the seed of corrective RAG.
-    if not chunks or chunks[0].score < RELEVANCE_FLOOR:
+    # model call straining to answer. This is the seed of corrective RAG. Use the
+    # best cosine score in the pool (hybrid fusion may not return it first).
+    if not chunks or max(c.score for c in chunks) < RELEVANCE_FLOOR:
         return Answer(text=REFUSAL, sources=[], grounded=False)
 
-    context = select_context(chunks) or chunks[:1]
+    context = select_context(chunks) or [max(chunks, key=lambda c: c.score)]
     messages = [
         ("system", CLOUD_MENTOR.system_prompt),
         ("human", _prompt(query, _format_context(context))),

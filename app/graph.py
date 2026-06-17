@@ -59,7 +59,8 @@ def retrieve_node(state: State) -> State:
 def grade_node(state: State) -> State:
     """Corrective-RAG: judge retrieval quality; re-query or refuse if weak (capped)."""
     chunks = state.get("retrieved") or []
-    top = chunks[0].score if chunks else 0.0
+    # Best cosine in the pool; hybrid fusion may not return it first.
+    top = max((c.score for c in chunks), default=0.0)
     if top >= CONFIDENT:
         verdict = "answer"
     elif top >= RELEVANCE_FLOOR:
