@@ -9,6 +9,6 @@ DATABASE_URL = os.environ.get("DATABASE_URL", "postgresql://localhost:5432/cumul
 CHAT_MODEL = os.environ.get("CHAT_MODEL", "claude-sonnet-4-6")
 REASONING_MODEL = os.environ.get("REASONING_MODEL", "claude-opus-4-8")
 CHEAP_MODEL = os.environ.get("CHEAP_MODEL", "claude-haiku-4-5-20251001")
-EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "voyage-3")
+EMBEDDING_MODEL = os.environ.get("EMBEDDING_MODEL", "text-embedding-3-small")
 
 RETRIEVAL_K = int(os.environ.get("RETRIEVAL_K", "6"))

@@ -8,7 +8,7 @@ CREATE EXTENSION IF NOT EXISTS vector;
 CREATE TABLE IF NOT EXISTS chunks (
     id          BIGSERIAL PRIMARY KEY,
     content     TEXT NOT NULL,
-    embedding   VECTOR(1024),          -- dim depends on the embedding model
+    embedding   VECTOR(1536),          -- 1536 = OpenAI text-embedding-3-small
     module      TEXT,                  -- e.g. "Networking", "IAM"
     lesson      TEXT,                  -- e.g. "VPC Peering"
     source_url  TEXT,                  -- provenance: where this came from (Notion page, etc.)
