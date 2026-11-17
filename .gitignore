@@ -10,7 +10,7 @@ venv/
 .env
 *.key
 
-# Data (raw curriculum is private course IP — never commit)
+# Data (raw curriculum is private course IP - never commit)
 data/curriculum/*
 !data/curriculum/.gitkeep
 

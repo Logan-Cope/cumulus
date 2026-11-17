@@ -1,7 +1,7 @@
 """A persona is CONFIG, not code. Same engine, different skin.
 
 To add a new mentor (different specialty, language, or tone) you add another
-PersonaConfig — you do NOT touch the graph, tools, or retrieval. This is the
+PersonaConfig - you do NOT touch the graph, tools, or retrieval. This is the
 exact seam that lets Transfer Placticas scale to dozens of personas, proven
 here on a single cloud-mentor persona.
 """
@@ -30,6 +30,6 @@ CLOUD_MENTOR = PersonaConfig(
         "rather than guessing.\n"
         "Cite the module/lesson you used. Encourage the learner; meet them where "
         "they are. You prepare learners for the certification exam and real design "
-        "work — you do not replace hands-on practice."
+        "work - you do not replace hands-on practice."
     ),
 )

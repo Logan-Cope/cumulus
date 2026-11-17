@@ -1,4 +1,4 @@
-"""Corrective-RAG routing is deterministic and score-based — test it offline
+"""Corrective-RAG routing is deterministic and score-based - test it offline
 without touching the model or the database.
 """
 from app.config import RELEVANCE_FLOOR

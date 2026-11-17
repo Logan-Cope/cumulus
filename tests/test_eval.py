@@ -1,5 +1,5 @@
 """Quality eval as pytest assertions. Marked `eval` because it makes real API +
-DB calls — excluded from the pre-commit hook (`pytest -m "not eval"`). Run with
+DB calls - excluded from the pre-commit hook (`pytest -m "not eval"`). Run with
 `uv run pytest -m eval` or `uv run python -m tests.eval`.
 """
 import pytest

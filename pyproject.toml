@@ -1,7 +1,7 @@
 [project]
 name = "cumulus"
 version = "0.1.0"
-description = "Cumulus — a culturally- and personally-responsive cloud-architecture mentor bot. Grounded RAG over a real cloud certification curriculum."
+description = "Cumulus - a culturally- and personally-responsive cloud-architecture mentor bot. Grounded RAG over a real cloud certification curriculum."
 requires-python = ">=3.12"
 dependencies = [
     "langchain>=1.0.0,<2.0.0",

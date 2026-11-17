@@ -136,7 +136,7 @@ def chunk_markdown(path: str, source_url: str | None = None) -> list[dict]:
         pieces = splitter.split_text(content) if len(content) > CHUNK_SIZE else [content]
         # Prepend a `module > lesson` breadcrumb so each chunk's embedding carries
         # its place in the curriculum, not just the local prose. (Lightweight
-        # contextual retrieval — the breadcrumb is also the citation.)
+        # contextual retrieval - the breadcrumb is also the citation.)
         breadcrumb = f"{module} > {lesson}"
         for piece in pieces:
             piece = piece.strip()

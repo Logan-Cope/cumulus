@@ -28,8 +28,8 @@ cases:
   - question: "What is DNS and how does it work?"
     expected_lessons: ["Computer Networking 🌐"]
 
-  # Paraphrased / awkward phrasing — exercises the corrective-RAG requery path.
-  - question: "the thing that turns website names into IP addresses — how does that work?"
+  # Paraphrased / awkward phrasing - exercises the corrective-RAG requery path.
+  - question: "the thing that turns website names into IP addresses - how does that work?"
     expected_lessons: ["Computer Networking 🌐"]
 
   - question: "What does the pwd command do in Linux?"
@@ -67,7 +67,7 @@ cases:
   - question: "What are the basic building blocks of Terraform?"
     expected_lessons: ["3. Basic Terraform Concepts"]
 
-  # Off-curriculum — must refuse, not guess.
+  # Off-curriculum - must refuse, not guess.
   - question: "How do I bake sourdough bread?"
     should_refuse: true
 

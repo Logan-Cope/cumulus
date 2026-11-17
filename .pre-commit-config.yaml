@@ -1,5 +1,5 @@
 # Fast, deterministic checks that run on every `git commit`.
-# Keep these QUICK — the eval harness (which makes API calls) runs separately,
+# Keep these QUICK - the eval harness (which makes API calls) runs separately,
 # not here. Activate once with:  uv run pre-commit install
 repos:
   - repo: local

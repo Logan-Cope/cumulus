@@ -17,11 +17,11 @@ flowchart TB
 
 ## Core principles
 
-1. **Guided interview with a deterministic spine** — a LangGraph state machine, not a free-form chatbot. The graph supplies structure; the model supplies language.
-2. **Grounded answers only** — retrieve, cite the source lesson, and say "I don't have enough information from the curriculum" rather than guess.
-3. **Structured facts vs. generative language** — anything that must be exact comes from data; the model only explains, it never invents facts.
-4. **Corrective RAG** — grade retrieval quality; re-query or refuse when it's weak (capped).
-5. **Persona = config, not code** — add new mentors (specialty, language, tone, voice) without touching the engine, tools, or retrieval.
+1. **Guided interview with a deterministic spine** - a LangGraph state machine, not a free-form chatbot. The graph supplies structure; the model supplies language.
+2. **Grounded answers only** - retrieve, cite the source lesson, and say "I don't have enough information from the curriculum" rather than guess.
+3. **Structured facts vs. generative language** - anything that must be exact comes from data; the model only explains, it never invents facts.
+4. **Corrective RAG** - grade retrieval quality; re-query or refuse when it's weak (capped).
+5. **Persona = config, not code** - add new mentors (specialty, language, tone, voice) without touching the engine, tools, or retrieval.
 
 ## Stack choices (and why)
 
@@ -31,4 +31,4 @@ flowchart TB
 
 ## The property this demonstrates
 
-> It only answers from the actual curriculum, and every answer cites the exact module — no hallucinated cloud advice.
+> It only answers from the actual curriculum, and every answer cites the exact module - no hallucinated cloud advice.

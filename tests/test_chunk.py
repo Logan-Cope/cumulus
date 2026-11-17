@@ -1,4 +1,4 @@
-"""Unit tests for the curriculum chunker — focused on the two parsing traps:
+"""Unit tests for the curriculum chunker - focused on the two parsing traps:
 overloaded `#` levels (day divider vs topic) and `#` lines inside code fences.
 """
 from ingest.chunk import chunk_markdown

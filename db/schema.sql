@@ -31,4 +31,4 @@ CREATE INDEX IF NOT EXISTS chunks_content_fts_idx
 
 -- LangGraph's PostgresSaver / PostgresStore create their own tables on setup()
 -- (checkpoints for conversation memory, store for long-term per-user memory).
--- Nothing to define here for those — see app/graph.py.
+-- Nothing to define here for those - see app/graph.py.

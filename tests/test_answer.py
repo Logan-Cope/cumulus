@@ -1,5 +1,5 @@
 """The refusal contract: when retrieval finds nothing close enough, Cumulus
-refuses instead of guessing — and does so without spending a model call.
+refuses instead of guessing - and does so without spending a model call.
 Retrieval is monkeypatched so this stays offline and fast.
 """
 import app.answer as answer

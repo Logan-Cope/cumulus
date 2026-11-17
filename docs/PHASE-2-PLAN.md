@@ -1,4 +1,4 @@
-# Cumulus Phase 2 — Path to Mid Tier
+# Cumulus Phase 2 - Path to Mid Tier
 
 The architecture plan to take Cumulus from MVP (Milestone 1) to the Mid tier: the
 production-solid, trustworthy, measurable version. Written so the pieces read as one
@@ -42,38 +42,38 @@ server** is the seam that makes the knowledge layer reusable and swappable.
 
 ## The build, component by component
 
-1. **Eval harness** *(in progress)* — the measuring stick. Loads `tests/eval_set.yaml`,
+1. **Eval harness** *(in progress)* - the measuring stick. Loads `tests/eval_set.yaml`,
    scores hit-rate@k + MRR, checks citations/refusals. Everything else is judged
    against it, so it's first. Deterministic core; LLM-as-judge optional later.
-2. **Chunker upgrades** — merge heading-only sections into their next section (kills
+2. **Chunker upgrades** - merge heading-only sections into their next section (kills
    the ~8% tiny chunks); prepend each chunk's `module > lesson` breadcrumb before
    embedding; re-ingest. Measure the gain.
-3. **Threshold split** — separate the refusal floor (answer at all?) from a higher
+3. **Threshold split** - separate the refusal floor (answer at all?) from a higher
    context floor (which chunks enter the prompt and get cited). Fixes citation leakage.
-4. **Reranker** — retrieve ~20 candidates, rerank (Cohere/Voyage), keep top 4–5.
+4. **Reranker** - retrieve ~20 candidates, rerank (Cohere/Voyage), keep top 4–5.
    Highest-ROI precision lever; ~$0.001–0.002/query; sits behind the retrieval interface.
-5. **Hybrid search** — add keyword/BM25 alongside dense vectors so exact terms
+5. **Hybrid search** - add keyword/BM25 alongside dense vectors so exact terms
    (service names, commands, acronyms) aren't missed; merge + rerank.
-6. **MCP server** *(the Pláticas deliverable)* — wrap retrieval (and future structured
+6. **MCP server** *(the Pláticas deliverable)* - wrap retrieval (and future structured
    tools) as MCP tools the agent calls. Turns "how would you design the MCP server?"
    into working code; makes the knowledge layer reusable across app + embed.
-7. **Consolidate on the graph** — make the LangGraph graph the single source of truth;
+7. **Consolidate on the graph** - make the LangGraph graph the single source of truth;
    CLI becomes a thin wrapper. Fully exercise the corrective-RAG loop.
-8. **Memory** — swap the in-memory checkpointer for LangGraph **PostgresSaver** so
+8. **Memory** - swap the in-memory checkpointer for LangGraph **PostgresSaver** so
    conversations persist (follow-ups work) and you get an audit trail. Same Supabase DB.
-9. **Cost hygiene** — Anthropic **prompt caching** on the static system prompt (90% off
+9. **Cost hygiene** - Anthropic **prompt caching** on the static system prompt (90% off
    repeated input); route cheap steps (query rewrite) to **Haiku**.
-10. **Quality gates** — **LangSmith** tracing to see what each run retrieved/said;
+10. **Quality gates** - **LangSmith** tracing to see what each run retrieved/said;
     **pre-commit** running fast tests before each commit; optional GitHub Actions to run
     the eval on each PR.
-11. **(Edge of Mid) Minimal API** — a small **FastAPI** `/chat` endpoint as the clean
+11. **(Edge of Mid) Minimal API** - a small **FastAPI** `/chat` endpoint as the clean
     front door for a later web UI or embed.
 
 ## Build order
 
 | # | Step | Depends on | Why this order |
 |---|---|---|---|
-| 1 | Eval harness | — | Can't measure improvements without it |
+| 1 | Eval harness | - | Can't measure improvements without it |
 | 2 | Chunker fixes + re-ingest | 1 | Measure the gain |
 | 3 | Threshold split | 1 | Free citation fix, measure |
 | 4 | Reranker | 1 | Biggest precision win, measure |
@@ -91,7 +91,7 @@ server** is the seam that makes the knowledge layer reusable and swappable.
 
 1. A learner asks a question. **LangGraph** picks it up, loading **conversation
    memory** for that thread from Postgres.
-2. The engine calls the **MCP server's** retrieval tool — agnostic to how knowledge is stored.
+2. The engine calls the **MCP server's** retrieval tool - agnostic to how knowledge is stored.
 3. Retrieval runs **hybrid search** over **pgvector**, pulls ~20 candidates, and a
    **reranker** sharpens to the 4–5 most relevant chunks, each with its source.
 4. The **grade** step checks confidence: strong → answer; weak → rewrite + retry once;
